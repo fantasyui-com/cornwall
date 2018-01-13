@@ -1,0 +1,23 @@
+{
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "~1.7.8"
+  },
+  "name": "cornwall",
+  "description": "Electron-based PixiJS Video Recording Environment",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fantasyui-com/cornwall.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fantasyui-com/cornwall/issues"
+  },
+  "homepage": "https://github.com/fantasyui-com/cornwall#readme"
+}
