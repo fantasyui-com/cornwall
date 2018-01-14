@@ -2,12 +2,19 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-var app = new PIXI.Application(800, 600, { antialias: true });
+const fs = require('fs');
+const sprintf = require("sprintf-js").sprintf;
+
+const width = 800;
+const height = 600;
+
+var app = new PIXI.Application(width, height, { antialias: true });
 document.body.appendChild(app.view);
 
 app.stage.interactive = true;
 
 var graphics = new PIXI.Graphics();
+var renderer = PIXI.autoDetectRenderer(width, height);
 
 // set a fill and line style
 graphics.beginFill(0xFF3300);
@@ -74,7 +81,18 @@ function onClick() {
     );
 }
 
+function dataURItoBlob(dataURI) {
+    var binary = atob(dataURI.split(',')[1]);
+    var array = [];
+    for(var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+}
+
+let frameNumber = 0;
 app.ticker.add(function() {
+    frameNumber++;
 
     count += 0.1;
 
@@ -89,4 +107,27 @@ app.ticker.add(function() {
     thing.lineTo( -120 + Math.sin(count) * 20, -100 + Math.cos(count)* 20);
 
     thing.rotation = count * 0.1;
+
+
+    renderer.render(app.stage);
+    // var data = renderer.view.toDataURL();
+    var data = renderer.view.toDataURL("image/png", 1);
+    //var dataURL = this.renderer.view.toDataURL('image/png');
+    let blob = dataURItoBlob(renderer.view.toDataURL("image/png", 1));
+
+
+    var reader = new FileReader();
+
+    reader.addEventListener("loadend", function() {
+    var buffer = new Buffer(reader.result, "binary");
+     fs.writeFile(sprintf("img%03d.png", frameNumber), buffer, function(err) {
+       if(err) {
+         console.log("err", err);
+       } else {
+         // success
+       }
+     });
+    });
+    reader.readAsArrayBuffer(blob);
+
 });

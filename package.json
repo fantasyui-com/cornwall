@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/fantasyui-com/cornwall/issues"
   },
-  "homepage": "https://github.com/fantasyui-com/cornwall#readme"
+  "homepage": "https://github.com/fantasyui-com/cornwall#readme",
+  "dependencies": {
+    "sprintf-js": "^1.1.1"
+  }
 }
