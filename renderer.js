@@ -2,7 +2,7 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-const fs = require('fs');
+const dataUrlToFile = require('data-url-to-file');
 const sprintf = require("sprintf-js").sprintf;
 
 const width = 800;
@@ -63,8 +63,8 @@ app.stage.addChild(graphics);
 // let's create a moving shape
 var thing = new PIXI.Graphics();
 app.stage.addChild(thing);
-thing.x = 800/2;
-thing.y = 600/2;
+thing.x = width/2;
+thing.y = height/2;
 
 var count = 0;
 
@@ -81,14 +81,12 @@ function onClick() {
     );
 }
 
-function dataURItoBlob(dataURI) {
-    var binary = atob(dataURI.split(',')[1]);
-    var array = [];
-    for(var i = 0; i < binary.length; i++) {
-        array.push(binary.charCodeAt(i));
-    }
-    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
-}
+
+
+
+
+
+
 
 let frameNumber = 0;
 app.ticker.add(function() {
@@ -108,26 +106,11 @@ app.ticker.add(function() {
 
     thing.rotation = count * 0.1;
 
-
     renderer.render(app.stage);
-    // var data = renderer.view.toDataURL();
-    var data = renderer.view.toDataURL("image/png", 1);
-    //var dataURL = this.renderer.view.toDataURL('image/png');
-    let blob = dataURItoBlob(renderer.view.toDataURL("image/png", 1));
 
-
-    var reader = new FileReader();
-
-    reader.addEventListener("loadend", function() {
-    var buffer = new Buffer(reader.result, "binary");
-     fs.writeFile(sprintf("img%03d.png", frameNumber), buffer, function(err) {
-       if(err) {
-         console.log("err", err);
-       } else {
-         // success
-       }
-     });
-    });
-    reader.readAsArrayBuffer(blob);
+    const mimeType = 'image/png';
+    const dataURL = renderer.view.toDataURL(mimeType, 1);
+    const fileName = sprintf("img%03d.png", frameNumber);
+    dataUrlToFile({dataURL, fileName, mimeType}, function(){});
 
 });
