@@ -1,9 +1,10 @@
 const electron = require('electron')
 // Module to control application life.
 const app = electron.app
+//app.commandLine.appendSwitch('--ignore-gpu-blacklist');
+
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
-
 const path = require('path')
 const url = require('url')
 

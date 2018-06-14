@@ -1,116 +1,34 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// All of the Node.js APIs are available in this process.
-
-const dataUrlToFile = require('data-url-to-file');
-const sprintf = require("sprintf-js").sprintf;
-
-const width = 800;
-const height = 600;
-
-var app = new PIXI.Application(width, height, { antialias: true });
+var app = new PIXI.Application();
 document.body.appendChild(app.view);
 
-app.stage.interactive = true;
+// Create background image
+var background = PIXI.Sprite.fromImage("bg.png");
+background.width = app.screen.width;
+background.height = app.screen.height;
+app.stage.addChild(background);
 
-var graphics = new PIXI.Graphics();
-var renderer = PIXI.autoDetectRenderer(width, height);
+// Stop application wait for load to finish
+app.stop();
 
-// set a fill and line style
-graphics.beginFill(0xFF3300);
-graphics.lineStyle(10, 0xffd900, 1);
+PIXI.loader.add('shader', 'shader.frag')
+    .load(onLoaded);
 
-// draw a shape
-graphics.moveTo(50,50);
-graphics.lineTo(250, 50);
-graphics.lineTo(100, 100);
-graphics.lineTo(250, 220);
-graphics.lineTo(50, 220);
-graphics.lineTo(50, 50);
-graphics.endFill();
+var filter;
 
-// set a fill and line style again
-graphics.lineStyle(10, 0xFF0000, 0.8);
-graphics.beginFill(0xFF700B, 1);
+// Handle the load completed
+function onLoaded (loader,res) {
 
-// draw a second shape
-graphics.moveTo(210,300);
-graphics.lineTo(450,320);
-graphics.lineTo(570,350);
-graphics.quadraticCurveTo(600, 0, 480,100);
-graphics.lineTo(330,120);
-graphics.lineTo(410,200);
-graphics.lineTo(210,300);
-graphics.endFill();
+    // Create the new filter, arguments: (vertexShader, framentSource)
+    filter = new PIXI.Filter(null, res.shader.data);
 
-// draw a rectangle
-graphics.lineStyle(2, 0x0000FF, 1);
-graphics.drawRect(50, 250, 100, 100);
+    // Add the filter
+    background.filters = [filter];
 
-// draw a circle
-graphics.lineStyle(0);
-graphics.beginFill(0xFFFF0B, 0.5);
-graphics.drawCircle(470, 200,100);
-graphics.endFill();
-
-graphics.lineStyle(20, 0x33FF00);
-graphics.moveTo(30,30);
-graphics.lineTo(600, 300);
-
-
-app.stage.addChild(graphics);
-
-// let's create a moving shape
-var thing = new PIXI.Graphics();
-app.stage.addChild(thing);
-thing.x = width/2;
-thing.y = height/2;
-
-var count = 0;
-
-// Just click on the stage to draw random lines
-app.stage.on('pointertap', onClick);
-
-function onClick() {
-    graphics.lineStyle(Math.random() * 30, Math.random() * 0xFFFFFF, 1);
-    graphics.moveTo(Math.random() * 800, Math.random() * 600);
-    graphics.bezierCurveTo(
-        Math.random() * 800, Math.random() * 600,
-        Math.random() * 800, Math.random() * 600,
-        Math.random() * 800, Math.random() * 600
-    );
+    // Resume application update
+    app.start();
 }
 
-
-
-
-
-
-
-
-let frameNumber = 0;
-app.ticker.add(function() {
-    frameNumber++;
-
-    count += 0.1;
-
-    thing.clear();
-    thing.lineStyle(10, 0xff0000, 1);
-    thing.beginFill(0xffFF00, 0.5);
-
-    thing.moveTo(-120 + Math.sin(count) * 20, -100 + Math.cos(count)* 20);
-    thing.lineTo( 120 + Math.cos(count) * 20, -100 + Math.sin(count)* 20);
-    thing.lineTo( 120 + Math.sin(count) * 20, 100 + Math.cos(count)* 20);
-    thing.lineTo( -120 + Math.cos(count)* 20, 100 + Math.sin(count)* 20);
-    thing.lineTo( -120 + Math.sin(count) * 20, -100 + Math.cos(count)* 20);
-
-    thing.rotation = count * 0.1;
-
-    renderer.render(app.stage);
-
-    const mimeType = 'image/png';
-    const dataURL = renderer.view.toDataURL(mimeType, 1);
-    const fileName = sprintf("img%03d.png", frameNumber);
-    dataUrlToFile({dataURL, fileName, mimeType}, function(){});
-
+// Animate the filter
+app.ticker.add(function(delta) {
+    filter.uniforms.customUniform += 0.1 * delta;
 });
