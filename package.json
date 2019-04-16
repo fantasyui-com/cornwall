@@ -8,7 +8,7 @@
   },
   "name": "cornwall",
   "description": "Electron-based PixiJS Video Recording Environment",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fantasyui-com/cornwall.git"
