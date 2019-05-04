@@ -4,7 +4,7 @@
     "start": "electron ."
   },
   "devDependencies": {
-    "electron": ">=1.8.2-beta5"
+    "electron": "^5.0.1"
   },
   "name": "cornwall",
   "description": "Electron-based PixiJS Video Recording Environment",
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/fantasyui-com/cornwall#readme",
   "dependencies": {
-    "data-url-to-file": "^1.1.0",
+    "data-url-to-file": "^1.2.0",
     "sprintf-js": "^1.1.1"
   }
 }
